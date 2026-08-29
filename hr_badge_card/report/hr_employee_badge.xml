@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="print_employee_badge_card" inherit_id="hr.print_employee_badge">
+
+        <!-- Structural stylesheet, injected once before the loop.
+             Colors are applied per element so that each company keeps its own palette
+             even when several employees are printed in one go.
+             The whole layout sits inside a 5 mm safe area: no solid color reaches the
+             edge, so the badge stays clean on a printer without full bleed. -->
+        <xpath expr="//t[@t-foreach='docs']" position="before">
+            <style>
+                .bc-card{ position:relative; width:86mm; height:54mm; overflow:hidden;
+                          background:#FFFFFF; color:#2B2B2B; page-break-after:always;
+                          font-family:"Century Gothic","Trebuchet MS","DejaVu Sans",sans-serif; }
+                .bc-frame{ position:absolute; left:3.5mm; top:3.5mm; width:79mm; height:47mm;
+                           border:.25mm solid #E8E8E8; border-radius:2.5mm; }
+                .bc-safe{ position:absolute; left:5mm; top:5mm; width:76mm; height:44mm; }
+
+                /* ---- front ---- */
+                .bc-photo{ position:absolute; left:0; top:0; width:13mm; height:13mm;
+                           border-radius:50%; border-style:solid; border-width:.5mm; }
+                .bc-name{ position:absolute; left:15.5mm; top:.6mm; width:40mm;
+                          font-weight:700; font-size:12pt; line-height:1.02; letter-spacing:-.15pt; }
+                .bc-name .bc-first{ display:block; font-size:9.5pt; font-weight:400; letter-spacing:.1pt; }
+                .bc-logo{ position:absolute; right:0; top:-1mm; width:19mm; }
+                .bc-rule{ position:absolute; left:0; top:16mm; width:24mm; height:.7mm; }
+                .bc-job{ position:absolute; left:0; top:18.6mm; font-size:7pt; color:#5B5B5B;
+                         font-weight:700; text-transform:uppercase; letter-spacing:.6pt; }
+                .bc-chipwrap{ position:absolute; left:0; top:23.4mm; }
+                .bc-chip{ display:inline-block; white-space:nowrap; color:#FFFFFF; font-size:6.2pt;
+                          font-weight:700; text-transform:uppercase; letter-spacing:.8pt;
+                          padding:.9mm 2.3mm; border-radius:3mm; }
+                .bc-contact{ position:absolute; left:0; top:29.5mm; font-size:7pt;
+                             color:#4A4A4A; line-height:1.5; }
+                .bc-contact .bc-ic{ font-weight:700; display:inline-block; width:3.4mm; }
+                .bc-qr{ position:absolute; right:0; bottom:0; width:18mm; height:18mm; }
+                .bc-sign{ position:absolute; left:0; bottom:.4mm; font-size:6.4pt;
+                          font-weight:700; letter-spacing:.2pt; line-height:1.45; }
+                .bc-sign .bc-dim{ color:#9A9A9A; font-weight:400; }
+
+                /* ---- back ---- */
+                .bc-btop{ position:absolute; left:0; top:5mm; width:76mm; text-align:center; }
+                .bc-wordmark{ max-width:52mm; max-height:16mm; display:block; margin:0 auto; }
+                .bc-url{ font-size:15pt; font-weight:700; letter-spacing:.2pt; margin-top:4mm; }
+                .bc-bcities{ font-size:7pt; font-weight:700; letter-spacing:1.5pt;
+                             text-transform:uppercase; margin-top:1.8mm; }
+                .bc-brule{ position:absolute; left:50%; bottom:8.6mm; width:16mm; height:.7mm;
+                           margin-left:-8mm; }
+                .bc-bsign{ position:absolute; left:0; bottom:1.6mm; width:76mm; text-align:center;
+                           font-size:6.6pt; font-weight:700; letter-spacing:.2pt; }
+            </style>
+        </xpath>
+
+        <!-- One front page and one back page per employee -->
+        <xpath expr="//t[@t-foreach='docs']" position="replace">
+            <t t-foreach="docs" t-as="employee">
+                <t t-set="company" t-value="employee.company_id"/>
+                <t t-set="c_primary" t-value="company.badge_color_primary or '#34495E'"/>
+                <t t-set="c_accent" t-value="company.badge_color_accent or '#16A085'"/>
+                <t t-set="c_highlight" t-value="company.badge_color_highlight or '#F39C12'"/>
+
+                <!-- ============ FRONT ============ -->
+                <div class="bc-card">
+                    <div class="bc-frame"/>
+                    <div class="bc-safe">
+
+                        <img class="bc-photo"
+                             t-att-src="image_data_uri(employee.avatar_1920)"
+                             t-attf-style="border-color:{{ c_accent }};" alt=""/>
+
+                        <div class="bc-name" t-attf-style="color:{{ c_primary }};">
+                            <span class="bc-first" t-if="employee.badge_first_name"
+                                  t-out="employee.badge_first_name"/>
+                            <span t-out="employee.badge_last_name"/>
+                        </div>
+
+                        <img class="bc-logo" t-if="employee.badge_logo"
+                             t-att-src="image_data_uri(employee.badge_logo)" alt=""/>
+
+                        <div class="bc-rule" t-attf-style="background:{{ c_highlight }};"/>
+                        <div class="bc-job" t-out="employee.job_title or employee.job_id.name"/>
+
+                        <div class="bc-chipwrap" t-if="employee.badge_label">
+                            <span class="bc-chip" t-attf-style="background:{{ c_accent }};"
+                                  t-out="employee.badge_label"/>
+                        </div>
+
+                        <div class="bc-contact">
+                            <div t-if="employee.badge_email">
+                                <span class="bc-ic" t-attf-style="color:{{ c_accent }};">&#9993;</span>
+                                <span t-out="employee.badge_email"/>
+                            </div>
+                            <div t-if="employee.badge_phone">
+                                <span class="bc-ic" t-attf-style="color:{{ c_accent }};">&#9742;</span>
+                                <span t-out="employee.badge_phone"/>
+                            </div>
+                        </div>
+
+                        <img class="bc-qr" t-if="employee.badge_qr"
+                             t-att-src="employee.badge_qr" alt="QR"/>
+
+                        <div class="bc-sign" t-attf-style="color:{{ c_primary }};">
+                            <span t-out="company.badge_slogan or company.name"/>
+                            <t t-if="company.badge_tagline">
+                                <br/><span class="bc-dim" t-out="company.badge_tagline"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ BACK ============ -->
+                <div class="bc-card">
+                    <div class="bc-frame"/>
+                    <div class="bc-safe">
+                        <div class="bc-btop">
+                            <img class="bc-wordmark" t-if="employee.badge_back_logo"
+                                 t-att-src="image_data_uri(employee.badge_back_logo)" alt=""/>
+                            <div class="bc-url" t-attf-style="color:{{ c_accent }};"
+                                 t-out="employee.badge_website"/>
+                            <div class="bc-bcities" t-attf-style="color:{{ c_primary }};"
+                                 t-out="company.badge_tagline"/>
+                        </div>
+                        <div class="bc-brule" t-attf-style="background:{{ c_highlight }};"/>
+                        <div class="bc-bsign" t-attf-style="color:{{ c_primary }};"
+                             t-out="company.badge_slogan or company.name"/>
+                    </div>
+                </div>
+
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_company_view_form_badge" model="ir.ui.view">
+        <field name="name">res.company.form.badge.card</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Employee Badge" name="employee_badge">
+                    <group>
+                        <group string="Signature">
+                            <field name="badge_slogan" placeholder="e.g. Your partner for Odoo"/>
+                            <field name="badge_tagline" placeholder="e.g. Paris - Lyon - Marseille"/>
+                        </group>
+                        <group string="Back of the badge">
+                            <field name="badge_website" placeholder="www.example.com"/>
+                            <field name="badge_back_logo" widget="image"
+                                   options="{'size': [220, 90]}"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="badge_fallback_email" placeholder="hello@example.com"/>
+                        </group>
+                        <group string="Colors">
+                            <field name="badge_color_primary" widget="color"/>
+                            <field name="badge_color_accent" widget="color"/>
+                            <field name="badge_color_highlight" widget="color"/>
+                            <field name="badge_color_qr" widget="color"/>
+                        </group>
+                    </group>
+                    <p class="text-muted">
+                        These settings apply to every badge printed for this company.
+                        The logo and phone number come from the employee's badge agency.
+                    </p>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
