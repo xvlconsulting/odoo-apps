@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="badge_agency_demo_hq" model="hr.badge.agency">
+        <field name="name">Head Office</field>
+        <field name="sequence">1</field>
+        <field name="phone">+33 1 23 45 67 89</field>
+    </record>
+    <record id="badge_agency_demo_south" model="hr.badge.agency">
+        <field name="name">Southern Branch</field>
+        <field name="sequence">2</field>
+        <field name="phone">+33 4 56 78 90 12</field>
+    </record>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_employee_view_form_badge" model="ir.ui.view">
+        <field name="name">hr.employee.form.badge.card</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="department_id" position="after">
+                <field name="badge_agency_id" options="{'no_create_edit': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="hr_employee_view_form_badge_settings" model="ir.ui.view">
+        <field name="name">hr.employee.form.badge.card.settings</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="barcode" position="after">
+                <field name="badge_qr_url" placeholder="https://..." widget="url"/>
+                <field name="badge_qr_image" widget="image" options="{'size': [96, 96]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="hr_employee_view_list_badge" model="ir.ui.view">
+        <field name="name">hr.employee.list.badge.card</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <field name="department_id" position="after">
+                <field name="badge_agency_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
